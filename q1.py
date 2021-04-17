@@ -1,6 +1,6 @@
 import sys
 import json
-import re as regx
+
 
 def objectNFA(s,l,tm,ss,fs):
     return {
@@ -21,7 +21,6 @@ def unitLenRegexToNFA(alphabet):
     ss = ["Q0"]
     fs = ["Q1"]
     return objectNFA(s, a, tm, ss, fs)
-
 
 
 def concatenationNFA(NFA1, NFA2):
@@ -116,9 +115,6 @@ def unionNFA(NFA1, NFA2):
     return objectNFA(s, l, tm, ss, fs)
 
 
-
-
-
 def starNFA(NFA):
     s = ['Q0']
     for i in range(len(NFA['states'])):
@@ -151,9 +147,18 @@ def starNFA(NFA):
     return objectNFA(s, l, tm, ss, fs)
 
 
+def isAlphabet(character):
+    flag = False
+    if (character>='a')and(character<='z'):
+        flag = True
+    elif (character>='0')and(character<='9'):
+        flag = True
+    return flag
+
 
 def convertToNFA(regular_expression):
-    pass
+    if regular_expression=="":
+        return unitLenRegexToNFA('$')
 
 
 if __name__=='__main__':
