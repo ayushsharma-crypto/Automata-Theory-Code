@@ -121,7 +121,8 @@ def starNFA(NFA):
         effective_state = 'Q'+str(i+1)
         s.append(effective_state)
     
-    only_final_state = f"Q{1+len(NFA['states'])}"
+    index = 1+len(NFA['states'])
+    only_final_state = 'Q'+str(index)
     s.append(only_final_state)
 
     l = [ letter for letter in NFA['letters'] ]
@@ -156,22 +157,74 @@ def isAlphabet(character):
     return flag
 
 
+def add_dot(regex):
+    indices = []
+    new_regex = regex[:]
+    for i in range(len(regex)-1):
+        cc = regex[i]
+        cn = regex[i+1]
+        if isAlphabet(cc) or (cc==')') or (cc=='*'):
+            if isAlphabet(cn) or cn=='(':
+                indices.append(i)
+    
+    for i in range(len(indices)):
+        index = indices[i]
+        new_regex = new_regex[:index+i+1]+"."+new_regex[index+i+1:]
+    return new_regex
+
+
+def infixToPostfix(regex):
+    precedence ={
+        '*':3,
+        '.':2,
+        '+':1
+    }
+    stack = []
+    postfixRegex = ""
+    for char in regex:
+        if isAlphabet(char) or (char=='*'):
+            postfixRegex += char
+        elif char=='(':
+            stack.append(char)
+        elif char==')':
+            while( (len(stack)!=0) and (stack[-1]!='(') ):
+                postfixRegex += stack.pop()
+            stack.pop()
+        else:
+            while( (len(stack)!=0) and 
+            (stack[-1]=='*' or stack[-1]=='.') and 
+            (precedence[char]<=precedence[stack[-1]]) 
+            ):
+                postfixRegex += stack.pop()
+            stack.append(char)
+    while len(stack)!=0:
+        postfixRegex += stack.pop()
+    return postfixRegex
+            
+
+
 def convertToNFA(regular_expression):
     if regular_expression=="":
         return unitLenRegexToNFA('$')
+    
+    regular_expression = add_dot(regular_expression)
+    regular_expression = infixToPostfix(regular_expression)
+    
 
 
 if __name__=='__main__':
     if len(sys.argv) != 3:
         print("Unexceptable Format!")
         quit()
-    
 
     try:
         input_file = open(sys.argv[1])
-        regular_expression = json.load(input_file)
+        regular_expression = json.load(input_file)['regex']
     except:
         print("Error accessing `input_file`")
         quit()
     
-    convertToNFA(regular_expression)
+    finalNFA = convertToNFA(regular_expression)
+
+    with open(sys.argv[2], "w+") as outfile: 
+        json.dump(finalNFA, outfile, indent=4)
