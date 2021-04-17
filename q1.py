@@ -38,17 +38,19 @@ def concatenationNFA(NFA1, NFA2):
     for i in range(len(NFA1['states'])):
         current_state = NFA1['states'][i]
         s.append(current_state)
-        if current_state in NFA1['start_state']:
+        if current_state in NFA1['start_states']:
             ss.append(current_state)
 
     for i in range(len(NFA2['states'])):
         current_state = NFA2['states'][i]
         effective_state = "Q"+str(i+len(NFA1['states']))
         s.append(effective_state)
-        if current_state in NFA2['final_state']:
+        if current_state in NFA2['final_states']:
             fs.append(effective_state)
-        for nfa1_final_state in NFA1['final_state']:
-            tm.append([nfa1_final_state,'$',effective_state])
+        
+        if current_state in NFA2['start_states']:
+            for nfa1_final_state in NFA1['final_states']:
+                tm.append([nfa1_final_state,'$',effective_state])
 
     # Making `tm` array
     for arc in NFA1['transition_matrix']:
@@ -60,7 +62,7 @@ def concatenationNFA(NFA1, NFA2):
         n_ns = 'Q'+ str(int(ns[1:])+len(NFA1['states']))
         tm.append([n_os, il, n_ns ])
     
-    return objectNFA(s, l ,tm, ss, fs)
+    return objectNFA(s, a,tm, ss, fs)
 
 
 def unionNFA(NFA1, NFA2):
@@ -112,7 +114,7 @@ def unionNFA(NFA1, NFA2):
         n_ns = 'Q'+ str(1+int(ns[1:])+len(NFA1['states']))
         tm.append([n_os, il, n_ns ])
     
-    return objectNFA(s, l, tm, ss, fs)
+    return objectNFA(s, a, tm, ss, fs)
 
 
 def starNFA(NFA):
@@ -200,7 +202,26 @@ def infixToPostfix(regex):
     while len(stack)!=0:
         postfixRegex += stack.pop()
     return postfixRegex
-            
+
+
+def makeNFA(postfixRegex):
+    nfaStack = []
+    for char in postfixRegex:
+        if isAlphabet(char):
+            nfaStack.append(unitLenRegexToNFA(char))
+        elif char=="*":
+            nfaStack.append(starNFA(nfaStack.pop()))
+        elif char=="+":
+            NFA2 = nfaStack.pop()
+            NFA1 = nfaStack.pop()
+            nfaStack.append(unionNFA(NFA1,NFA2))
+        elif char==".":
+            NFA2 = nfaStack.pop()
+            NFA1 = nfaStack.pop()
+            nfaStack.append(concatenationNFA(NFA1,NFA2))
+        else:
+            print("Literally, an Edge case is there!")
+    return nfaStack.pop()
 
 
 def convertToNFA(regular_expression):
@@ -209,7 +230,7 @@ def convertToNFA(regular_expression):
     
     regular_expression = add_dot(regular_expression)
     regular_expression = infixToPostfix(regular_expression)
-    
+    return makeNFA(regular_expression)
 
 
 if __name__=='__main__':

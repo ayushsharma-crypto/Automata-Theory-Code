@@ -1,1 +1,22 @@
-null
+{
+    "states": [
+        "Q0", 
+        "Q1"
+    ], 
+    "final_states": [
+        "Q1"
+    ], 
+    "letters": [
+        "a"
+    ], 
+    "start_states": [
+        "Q0"
+    ], 
+    "transition_matrix": [
+        [
+            "Q0", 
+            "a", 
+            "Q1"
+        ]
+    ]
+}
