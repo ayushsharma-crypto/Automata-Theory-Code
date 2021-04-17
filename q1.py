@@ -114,10 +114,42 @@ def unionNFA(NFA1, NFA2):
         tm.append([n_os, il, n_ns ])
     
     return objectNFA(s, l, tm, ss, fs)
-    
 
+
+
+
+
+def starNFA(NFA):
+    s = ['Q0']
+    for i in range(len(NFA['states'])):
+        effective_state = 'Q'+str(i+1)
+        s.append(effective_state)
     
+    only_final_state = f"Q{1+len(NFA['states'])}"
+    s.append(only_final_state)
+
+    l = [ letter for letter in NFA['letters'] ]
+    ss = ['Q0']
+    fs = [only_final_state]
+
+    tm = []
+    for arc in NFA['transition_matrix']:
+        [os, il, ns] = arc
+        n_os = 'Q'+ str(1+int(os[1:]))
+        n_ns = 'Q'+ str(1+int(ns[1:]))
+        tm.append([n_os, il, n_ns ])
     
+    for st_state in NFA['start_states']:
+        tm.append(['Q0','$','Q'+ str(1+int(st_state[1:]))])
+    tm.append(['Q0','$',only_final_state])
+
+    for fn_state in NFA['final_states']:
+        tm.append(['Q'+ str(1+int(fn_state[1:])),'$',only_final_state])
+        for st_state in NFA['start_states']:
+            tm.append(['Q'+ str(1+int(fn_state[1:])),'$','Q'+ str(1+int(st_state[1:]))])
+    
+    return objectNFA(s, l, tm, ss, fs)
+
 
 
 def convertToNFA(regular_expression):
