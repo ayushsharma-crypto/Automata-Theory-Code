@@ -38,7 +38,7 @@ def getFinalState(nfaFinalStates,dfaStates):
     for st in dfaStates:
         for fst in nfaFinalStates:
             if fst in st:
-                returnState += st
+                returnState.append(st)
     return returnState
 
 
