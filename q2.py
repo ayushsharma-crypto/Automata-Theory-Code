@@ -50,7 +50,7 @@ def getFinalState(nfaFinalStates,dfaStates):
     returnState = []
     for st in dfaStates:
         for fst in nfaFinalStates:
-            if (fst not in returnState)and(fst in st):
+            if (st not in returnState)and(fst in st):
                 returnState.append(st)
                 break
     return returnState
