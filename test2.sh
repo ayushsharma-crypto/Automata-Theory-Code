@@ -1,6 +1,5 @@
 python q2.py ./q1-output/0.txt ./q2-output/0.txt
 python q2.py ./q1-output/1.txt ./q2-output/1.txt
-python q2.py ./q1-output/2.txt ./q2-output/2.txt
 python q2.py ./q1-output/3.txt ./q2-output/3.txt
 python q2.py ./q1-output/4.txt ./q2-output/4.txt
 python q2.py ./q1-output/5.txt ./q2-output/5.txt
@@ -12,5 +11,3 @@ python q2.py ./q1-output/10.txt ./q2-output/10.txt
 python q2.py ./q1-output/11.txt ./q2-output/11.txt
 python q2.py ./q1-output/12.txt ./q2-output/12.txt
 python q2.py ./q1-output/13.txt ./q2-output/13.txt
-python q2.py ./q1-output/14.txt ./q2-output/14.txt
-python q2.py ./q1-output/15.txt ./q2-output/15.txt
