@@ -13,9 +13,9 @@ def objectFA(s,l,tm,ss,fs):
     }
 
 
-def epsilonClosure(nfaTransitionMatrix, nfaStartStateList):
+def epsilonClosure(nfaTransitionMatrix, stateList):
     returnState = []
-    for sst in nfaStartStateList:
+    for sst in stateList:
         returnState.append(sst)
         for arc in nfaTransitionMatrix:
             [ss, l, fs] = arc
@@ -43,14 +43,15 @@ def getFinalState(nfaFinalStates,dfaStates):
 
 
 def getTransitionedState(nfaTransitionMatrix, state, letter):
-    returnState = []
-    for arc in nfaTransitionMatrix:
-        [ss, l, fs] = arc
-        if (l != letter) or (ss != state):
-            continue
-        if fs not in returnState:
-            returnState.append(fs)
-    return returnState
+    ts = []
+    for st in state:
+        for arc in nfaTransitionMatrix:
+            [ss, l, fs] = arc
+            if (l != letter) or (ss != st):
+                continue
+            if fs not in ts:
+                ts.append(fs)
+    return ts
 
 
 def formTransitionMatrix(nfaTransitionMatrix, dfaStates, dfaLetters):
@@ -66,7 +67,7 @@ def convertNFAToDFA(NFA):
     DFA_L = NFA['letters'][:]
     DFA_S = allStatesCombination(NFA['states'])
     DFA_FS = getFinalState(NFA['final_states'],DFA_S)
-    DFA_SS = epsilonClosure(NFA['transition_matrix'],NFA['start_states'])
+    DFA_SS = [ epsilonClosure(NFA['transition_matrix'],[sst]) for sst in NFA['start_states'] ]
     DFA_TM = formTransitionMatrix(NFA['transition_matrix'], DFA_S, DFA_L)
 
     return objectFA(DFA_S,DFA_L,DFA_TM,DFA_SS,DFA_FS)
