@@ -43,7 +43,14 @@ def getFinalState(nfaFinalStates,dfaStates):
 
 
 def getTransitionedState(nfaTransitionMatrix, state, letter):
-    pass
+    returnState = []
+    for arc in nfaTransitionMatrix:
+        [ss, l, fs] = arc
+        if (l != letter) or (ss != state):
+            continue
+        if fs not in returnState:
+            returnState.append(fs)
+    return returnState
 
 
 def formTransitionMatrix(nfaTransitionMatrix, dfaStates, dfaLetters):
@@ -51,7 +58,7 @@ def formTransitionMatrix(nfaTransitionMatrix, dfaStates, dfaLetters):
     for st in dfaStates:
         for l in dfaLetters:
             transitionedState = getTransitionedState(nfaTransitionMatrix, st, l)
-            tm.append(epsilonClosure(transitionedState))
+            tm.append([st,l,epsilonClosure(nfaTransitionMatrix,transitionedState)])
     return tm
 
 
