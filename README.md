@@ -114,3 +114,37 @@ def convertNFAToDFA(NFA):
 
 # DFA →  Regex
 
+
+For the required cnversion there 3 thumb rules to be followed:
+
+* If the initial state has any incoming edges, construct a new initial state that does not have any incoming edges.
+* Convert all final states in the DFA to non-final states and create a new single final state where there are multiple final states.
+* If the final state has any outgoing edges, build a new final state that does not have any outgoing edges.
+
+
+## Code Flow
+
+
+* Checking input file format. Loading if correct using `json` module.
+* Called `convertDFAToRegex(myDFA)` function, which does the following:-
+
+    1. Converted DFA → GNFA, by following steps:-
+        * Add a new start state with an ε-arc to the old start state.
+        * Add a new accept state with ε-arc  from old accept state.
+        * If any arc has multiple labels we replace each with a single arc whose label is a union of the previous labels.
+        * Finally we add arc labelled `None` between states that had no arcs between them.
+        * This last step won't change the language recognise because a transition labelled with `None` can never be used.
+        * This has been achieved using function ` makeGNFA(DFA)` that returns `new start state`, `new final state` and `deltaFunction`. `deltaFunction` is new transition matrix kind of thing for GNFA.
+    
+    2. Performed `state elimination` method until no states found in the GNFA other than `new start state` and `new final state`. Steps involved are:-
+        * For each state `ripState` in DFA state, get parents & children nodes.
+        * Performed the following arc-updation using function `updateArc()` where `Qrip` is `ripState` i.e. to be removed and `Qi` is one of the parent and 'Qj` is one of the children :-
+        ![text](./images/gnfa.png)
+        * Finaly returned the value at the arc from `new start state` to `new final state`. This will be our required Regular Expression.
+
+
+
+
+
+
+# DFA Minimization
