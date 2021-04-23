@@ -8,7 +8,7 @@
         "0",
         "1"
     ],
-    "transition_matrix": [
+    "transition_function": [
         [
             "Q0",
             "0",

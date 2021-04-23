@@ -100,7 +100,7 @@ if __name__=="__main__":
         rawNFA = json.load(input_file)
         s = rawNFA['states']
         l = rawNFA['letters']
-        tm = rawNFA['transition_matrix']
+        tm = rawNFA['transition_function']
         ss = rawNFA['start_states']
         fs = rawNFA['final_states']
         myNFA = objectFA(s, l, tm, ss, fs)
