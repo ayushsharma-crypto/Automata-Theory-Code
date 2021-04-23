@@ -2,7 +2,6 @@ from copy import deepcopy
 import sys
 import json
 
-
 def objectFA(s,l,tm,ss,fs):
     return {
         'states': s,
@@ -12,13 +11,13 @@ def objectFA(s,l,tm,ss,fs):
         'final_states':fs
     }
 
-
 def makeGNFA(DFA):
     deltaFunction = {}
-    new_start_state = 'S'
-    new_final_state = 'F'
+    new_start_state = 'START'
+    new_final_state = 'FINAL'
     deltaFunction[new_start_state] = {}
     deltaFunction[new_final_state] = {}
+    deltaFunction[new_start_state][new_final_state] = None
 
     for st in DFA['states']:
         deltaFunction[st] = {}
@@ -26,22 +25,14 @@ def makeGNFA(DFA):
         for st1 in DFA['states']:
             deltaFunction[st][st1] = None
         
-        deltaFunction[new_start_state][st] = None
-        deltaFunction[st][new_final_state] = None
-        if st in DFA['start_states']:
-            deltaFunction[new_start_state][st] = '$'
-        if st in DFA['final_states']:
-            deltaFunction[st][new_final_state] = '$'
+        deltaFunction[new_start_state][st] = None if (st not in DFA['start_states']) else '$'
+        deltaFunction[st][new_final_state] = None if (st not in DFA['final_states']) else '$'
         
     for arc in DFA['transition_matrix']:
         [ss, l, fs] = arc
-        if deltaFunction[ss][fs] != None:
-            deltaFunction[ss][fs] += f"+{l}"
-        else:
-            deltaFunction[ss][fs] = l
+        deltaFunction[ss][fs] = l if (deltaFunction[ss][fs]==None) else deltaFunction[ss][fs] + f"+{l}"
     
     return new_start_state, new_final_state, deltaFunction
-
 
 def getParentChildren(ripState, deltaFunction):
     parent = []
@@ -64,14 +55,12 @@ def getParentChildren(ripState, deltaFunction):
 
     return parent, children
 
-
 def updateArc(delPR, delRR, delRC, delPC):
-    R1 = '' if delPR==None else '('+str(delPR)+')'
-    R2 = '' if delRR==None else '('+str(delRR)+')*'
-    R3 = '' if delRC==None else '('+str(delRC)+')'
-    R4 = '' if delPC==None else '+('+str(delPC)+')'
-    return R1+R2+R3+R4  
-
+    R1 = '' if (delPR==None) or (delPR=='$') else str(delPR)
+    R2 = '' if (delRR==None) or (delRR=='$') else '('+str(delRR)+')*'
+    R3 = '' if (delRC==None) or (delRC=='$') else str(delRC)
+    R4 = '' if (delPC==None) or (delPC=='$') else '+'+str(delPC)
+    return '('+R1+R2+R3+R4 +')'
 
 def updateStateTransition(deltaFunction, parents, children, ripState):
     updatedDeltaFunction = deepcopy(deltaFunction)
@@ -84,17 +73,16 @@ def updateStateTransition(deltaFunction, parents, children, ripState):
             updatedDeltaFunction[parent][child] = updateArc(delPR, delRR, delRC, delPC)
     return updatedDeltaFunction
 
-
 def eliminateState(ripState, updatedDeltaFunction):
     retDeltaFunction = {}
     for stateKey in updatedDeltaFunction:
         if stateKey != ripState:
-            childrenDict = updatedDeltaFunction[stateKey]
-            for child in childrenDict:
-                if childrenDict!=ripState:
-                    retDeltaFunction[stateKey][child]=updatedDeltaFunction[stateKey][child]
+            retDeltaFunction[stateKey] = {}
+            for child in updatedDeltaFunction[stateKey]:
+                if child != ripState:
+                    val = updatedDeltaFunction[stateKey][child]
+                    retDeltaFunction[stateKey][child] = val
     return retDeltaFunction
-
 
 def stateElimination(new_start_state, new_final_state, deltaFunction, dfaStates):
     for ripState in dfaStates:
@@ -103,12 +91,10 @@ def stateElimination(new_start_state, new_final_state, deltaFunction, dfaStates)
         deltaFunction = eliminateState(ripState, updatedDeltaFunction)
     return deltaFunction[new_start_state][new_final_state]
 
-
 def convertDFAToRegex(DFA):  
     new_start_state, new_final_state, deltaFunction = makeGNFA(DFA)
     finalRegex = stateElimination(new_start_state, new_final_state, deltaFunction, DFA['states'])
     return finalRegex
-
 
 if __name__=="__main__":
     if len(sys.argv) != 3:
@@ -120,7 +106,7 @@ if __name__=="__main__":
         rawDFA = json.load(input_file)
         s = rawDFA['states']
         l = rawDFA['letters']
-        tm = rawDFA['transition_matrix']
+        tm = rawDFA['transition_function']
         ss = rawDFA['start_states']
         fs = rawDFA['final_states']
         myDFA = objectFA(s, l, tm, ss, fs)
