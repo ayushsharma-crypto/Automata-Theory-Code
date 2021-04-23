@@ -30,7 +30,7 @@ def makeGNFA(DFA):
         
     for arc in DFA['transition_matrix']:
         [ss, l, fs] = arc
-        deltaFunction[ss][fs] = l if (deltaFunction[ss][fs]==None) else deltaFunction[ss][fs] + f"+{l}"
+        deltaFunction[ss][fs] = l if (deltaFunction[ss][fs]==None) else deltaFunction[ss][fs] + "+" + str(l)
     
     return new_start_state, new_final_state, deltaFunction
 
@@ -56,11 +56,11 @@ def getParentChildren(ripState, deltaFunction):
     return parent, children
 
 def updateArc(delPR, delRR, delRC, delPC):
-    R1 = '' if (delPR==None) or (delPR=='$') else str(delPR)
-    R2 = '' if (delRR==None) or (delRR=='$') else '('+str(delRR)+')*'
-    R3 = '' if (delRC==None) or (delRC=='$') else str(delRC)
-    R4 = '' if (delPC==None) or (delPC=='$') else '+'+str(delPC)
-    return '('+R1+R2+R3+R4 +')'
+    R1 = '' if (delPR==None) else '('+str(delPR)+')'
+    R2 = '' if (delRR==None) else '('+str(delRR)+')*'
+    R3 = '' if (delRC==None) else '('+str(delRC)+')'
+    R4 = '' if (delPC==None) else '+('+str(delPC)+')'
+    return R1+R2+R3+R4
 
 def updateStateTransition(deltaFunction, parents, children, ripState):
     updatedDeltaFunction = deepcopy(deltaFunction)

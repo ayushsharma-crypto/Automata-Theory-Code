@@ -1,0 +1,27 @@
+{
+    "states": [
+        "Q0"
+    ],
+    "letters": [
+        "0",
+        "1"
+    ],
+    "transition_function": [
+        [
+            "Q0",
+            "0",
+            "Q0"
+        ],
+        [
+            "Q0",
+            "1",
+            "Q0"
+        ]
+    ],
+    "start_states": [
+        "Q0"
+    ],
+    "final_states": [
+        "Q0"
+    ]
+}
