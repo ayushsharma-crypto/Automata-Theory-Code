@@ -86,7 +86,14 @@ def updateStateTransition(deltaFunction, parents, children, ripState):
 
 
 def eliminateState(ripState, updatedDeltaFunction):
-    pass
+    retDeltaFunction = {}
+    for stateKey in updatedDeltaFunction:
+        if stateKey != ripState:
+            childrenDict = updatedDeltaFunction[stateKey]
+            for child in childrenDict:
+                if childrenDict!=ripState:
+                    retDeltaFunction[stateKey][child]=updatedDeltaFunction[stateKey][child]
+    return retDeltaFunction
 
 
 def stateElimination(new_start_state, new_final_state, deltaFunction, dfaStates):
