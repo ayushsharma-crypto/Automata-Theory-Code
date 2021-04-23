@@ -36,14 +36,14 @@ Code for following conversion :
 This construction exploits these 2 facts:-
 
 1. Closure property of a NFA over `Kleene star`, `Union` & `concatenation` operation.
-2. `ε-transitions`. For example for a given NFA, `ε-transitions` of start set will be set of all states that can be reached by traversing the graph on edges have label `ε` on it.
+2. `ε-transitions` contributes nothing.
 
 **Note** : Using `ε-transitions`, this approach creates a regular expression from its elements. The `ε-transitions` serve as a "glue" or "mortar" for the NFA subcomponents. Since concatenation with the empty string leaves a regular expression unchanged (concatenation ε with is the identity operation), hence ε-transition contributes nothing.
 
 1. The NFA’s for single character regular expressions ε, a, b : 
     ```
-                a/b/ε
-        →(Q0)----------->((Q1)) ; Q0 start states & Q1 is final States
+            a/b/ε
+    →(Q0)----------->((Q1)) ; Q0 start states & Q1 is final States
     ```
 
 2. **UNION** : The NFA for the union of N1 and N2: `N1+N2` is made up of individual NFAs with the NFA acting as "glue." Individual accepting states can be removed and replaced with the general accepting state as following:
@@ -62,4 +62,55 @@ This construction exploits these 2 facts:-
 ![text](./images/kleenstar-nfa.png)
 
 
+
+
+# NFA →  DFA
+
+A Deterministic Finite Automaton (DFA) is a good basis for a transition table since it has at most one edge from each state for a given symbol. We have to use subset construction to get rid of the ε-transitions.
+
+Some Terms used :
+**ε-closure(s)** : Set of NFA states reachable from NFA state s on ε-transitions alone. Implemented usng function `computeNfaEpsilonClosureDict()`, which creates a dictionary for each state of NFA as key with it's value to be `ε-closure()`.
+
+**ε-closure(T)** : Set of NFA states reachable from set of states T on ε-transitions alone. Implemented using function `epsilonClosure(stateList)`, which returns a list of state i.e. `ε-closure(stateList)`.
+
+## Code Flow
+
+* Checking input file format. Loading if correct using `json` module.
+* Called `convertNFAToDFA(NFA)` function, which does the following:-
+    
+    1. Copy corresponding letter from `NFA`, as language is same for DFA.
+    2. Calculated power set of the NFA states. For DFA's state set.
+    3. Then collected elements of power set having states as one of the NFA's final accept state. This collection is our DFA's final accept state.
+    4. Created above described dicitionary named `unitStateEpsilonClosure` i.e. using `computeNfaEpsilonClosureDict()` function.[ Used concept of `DFS(Depth First Search)`. ]
+    5. Calculated `ε-closure()` for start state, which wll be our final DFA state.
+    6. Calculated `transition_function/transition_matrix` for final DFA by calculating `transitionedState` i.e. set of states to which there is a transition on input symbol a from some DFA state in T. Then appending to `transition_function/transition_matrix` list `[T,a,epsilonClosure(transitionedState)]`.
+    7. Finaly, returned `objectFA(DFA_S,DFA_L,DFA_TM,DFA_SS,DFA_FS)` i.e. our final DFA.
+
+
+```python3
+
+def convertNFAToDFA(NFA):
+    DFA_L = NFA['letters'][:]
+    DFA_S = allStatesCombination(NFA['states'])
+    DFA_FS = getFinalState(NFA['final_states'],DFA_S)
+    
+    for st in NFA['states']:
+        for st1 in NFA['states']:
+            visited[st1] = False
+            nfaEpsilonClosureDict[st1]=[]
+        unitStateEpsilonClosure[st] = computeNfaEpsilonClosureDict(st,NFA['transition_matrix'])
+
+    DFA_SS = [ epsilonClosure([sst]) for sst in NFA['start_states'] ]
+    DFA_TM = formTransitionMatrix(NFA['transition_matrix'], DFA_S, DFA_L)
+
+    return objectFA(DFA_S,DFA_L,DFA_TM,DFA_SS,DFA_FS)
+
+```
+
+
+
+
+
+
+# DFA →  Regex
 
