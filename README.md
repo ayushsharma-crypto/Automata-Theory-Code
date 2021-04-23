@@ -69,6 +69,7 @@ This construction exploits these 2 facts:-
 A Deterministic Finite Automaton (DFA) is a good basis for a transition table since it has at most one edge from each state for a given symbol. We have to use subset construction to get rid of the ε-transitions.
 
 Some Terms used :
+
 **ε-closure(s)** : Set of NFA states reachable from NFA state s on ε-transitions alone. Implemented usng function `computeNfaEpsilonClosureDict()`, which creates a dictionary for each state of NFA as key with it's value to be `ε-closure()`.
 
 **ε-closure(T)** : Set of NFA states reachable from set of states T on ε-transitions alone. Implemented using function `epsilonClosure(stateList)`, which returns a list of state i.e. `ε-closure(stateList)`.
