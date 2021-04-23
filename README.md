@@ -8,6 +8,12 @@ Code for following conversion :
 * DFA →	 Regular Expression
 * Minimizing a DFA
 
+
+**Working Code Video link**: 
+
+* One Drive Link - https://iiitaphyd-my.sharepoint.com/:v:/g/personal/ayush_sharma_students_iiit_ac_in/EcnheHymBjlIlqr9yJGylmUBUBRsTA8SeE0LnNC1r2qwrw?e=klRil7
+* Google Drive Link - https://drive.google.com/file/d/1tAZSP8VnlR3KN4RiIgzm3U0D832QHaSH/view
+
 # Regex →  NFA
 
 ## Code Flow
@@ -149,3 +155,21 @@ For the required cnversion there 3 thumb rules to be followed:
 
 
 # DFA Minimization
+
+Used Myhill-Nerode Theorem : 
+
+Myhill nerode theorem states that a language is regular if and only if the number of equivalence classes in R_L is finite moreover, if finite, the number of classes is the number of state in the smallest dfa for language L.
+
+So followed the following steps to achive the minimization of DFA:-
+
+* Construct a table with all pairs of states (Qi, Qj) that aren't necessarily related [all are unmarked at first]. Achieve this by making class named `MinimizeDFA()` & putting following variable in `__init__()` function while creating a instance for it.
+
+    ```python3
+    self.table = [ [ 0 for _ in range(len(self.s)) ] for _ in range(len(self.s))]
+    ```
+* Consider and mark of state pair (Qi, Qj) in the DFA where Qi ∈ F and Qj ∉  F or vice versa. [The sequence of final states is denoted by the letter F.]. Function ` __initializeTable(self)` accounts for the same.
+
+* While not converge( basically no more partition of state space is possible) :-
+    >- If the pair {δ (Qi, A), δ (Qi, A)} is labelled for any input alphabet, mark pair (Qi, Qj) if not marked.
+
+* In the reduced DFA, combine all the unmarked pairs (Qi, Qj) into a single state.

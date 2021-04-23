@@ -1,0 +1,8 @@
+python q1.py ./Formats/q1/input.json ./Formats/q1/my_output.json
+python q2.py ./Formats/q2/input.json ./Formats/q2/my_output.json
+python q3.py ./Formats/q3/input.json ./Formats/q3/my_output.json
+python q4.py ./Formats/q4/input.json ./Formats/q4/my_output.json
+
+
+
+THANKYOU!!...
