@@ -3,10 +3,10 @@
 Ayush Sharma (2019101004)
 
 Code for following conversion : 
-* Regular Expression →	  NFA
-* NFA →	 DFA
-* DFA →	 Regular Expression
-* Minimizing a DFA
+* Regular Expression →	  NFA [ code in q1.py ]
+* NFA →	 DFA [ code in q2.py ]
+* DFA →	 Regular Expression [ code in q3.py ]
+* Minimizing a DFA [ code in q4.py ]
 
 
 **Working Code Video link**: 
